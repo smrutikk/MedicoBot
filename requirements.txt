@@ -1,6 +1,5 @@
-Flask
-scikit-learn
-pandas
+fastapi
+uvicorn
+pydantic
 numpy
-pickle-mixin
-gunicorn
+scikit-learn
