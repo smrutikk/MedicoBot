@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # To allow requests from the frontend
-import requests
+import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -16,8 +16,9 @@ CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Hugging Face API details
 model_name = "itlwas/BioMistral-7B-Q4_K_M-GGUF"  # Update with your model path
-tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
-model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=True)
+hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
 
 # Load embeddings
 embeddings = SentenceTransformerEmbeddings(model_name="NeuML/pubmedbert-base-embeddings")
