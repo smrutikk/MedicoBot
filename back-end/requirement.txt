@@ -1,9 +1,10 @@
-Flask
+flask
 flask-cors
+transformers
+torch
 langchain
 langchain-community
-sentence-transformers
 chromadb
+sentence-transformers
+pypdf
 llama-cpp-python
-PyPDF2
-transformers

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # To allow requests from the frontend
-from llama_cpp import Llama
+import requests
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import SentenceTransformerEmbeddings
@@ -13,13 +14,16 @@ from langchain.schema.output_parser import StrOutputParser
 app = Flask(__name__)
 CORS(app)  # Enable Cross-Origin Resource Sharing
 
-# Load model and embeddings
-model_path = "/content/drive/MyDrive/Heart-Medico-GUVI/BioMistral-7B.Q4_K_M.gguf"
-llm = Llama(model_path=model_path)
+# Hugging Face API details
+model_name = "itlwas/BioMistral-7B-Q4_K_M-GGUF"  # Update with your model path
+tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=True)
+model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=True)
+
+# Load embeddings
 embeddings = SentenceTransformerEmbeddings(model_name="NeuML/pubmedbert-base-embeddings")
 
 # Load PDFs and create a vector store
-pdf_directory = "/back-end/pdfs"
+pdf_directory = "./pdfs"
 loader = PyPDFDirectoryLoader(pdf_directory)
 docs = loader.load()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
@@ -40,14 +44,6 @@ Please be truthful and give direct answers.
 """
 prompt = ChatPromptTemplate.from_template(template)
 
-# RAG chain
-rag_chain = (
-    {"context": retriever, "query": RunnablePassthrough()}
-    | prompt
-    | llm
-    | StrOutputParser()
-)
-
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -59,10 +55,28 @@ def predict():
         if not question:
             return jsonify({'error': 'No question provided'}), 400
 
-        # Query the RAG chain
-        response = rag_chain.invoke(question)
+        # Retrieve context from vectorstore
+        context_docs = retriever.get_relevant_documents(question)
+        context = " ".join([doc.page_content for doc in context_docs])
 
-        return jsonify({'answer': response})
+        # Prepare the prompt with context
+        full_prompt = f"<|context|>\n{context}\n<|user|>\n{question}\n<|assistant|>\n"
+
+        # Query Hugging Face Inference API
+        payload = {"inputs": full_prompt}
+        response = requests.post(HF_API_URL, headers=HEADERS, json=payload)
+
+        if response.status_code != 200:
+            return jsonify({'error': f"Failed to get response from model. Status Code: {response.status_code}"}), 500
+
+        # Extract model's answer
+        api_response = response.json()
+        if isinstance(api_response, dict) and "error" in api_response:
+            return jsonify({'error': api_response['error']}), 500
+
+        answer = api_response[0]["generated_text"]
+
+        return jsonify({'answer': answer})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
