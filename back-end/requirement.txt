@@ -1,0 +1,9 @@
+Flask
+flask-cors
+langchain
+langchain-community
+sentence-transformers
+chromadb
+llama-cpp-python
+PyPDF2
+transformers
