@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Hugging Face API details
-model_name = "itlwas/BioMistral-7B-Q4_K_M-GGUF"  # Update with your model path
+model_name = "TheBloke/Mistral-7B-v0.1-GGUF"  # Update with your model path
 hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
