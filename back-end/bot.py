@@ -59,24 +59,15 @@ def predict():
         context_docs = retriever.get_relevant_documents(question)
         context = " ".join([doc.page_content for doc in context_docs])
 
-        # Prepare the prompt with context
-        full_prompt = f"<|context|>\n{context}\n<|user|>\n{question}\n<|assistant|>\n"
+        # Prepare the prompt for the LLM
+        prompt = f"<|context|>\n{context}\n<|user|>\n{question}\n<|assistant|>\n"
 
-        # Query Hugging Face Inference API
-        payload = {"inputs": full_prompt}
-        response = requests.post(HF_API_URL, headers=HEADERS, json=payload)
+        # Generate response using the Hugging Face model
+        inputs = tokenizer(prompt, return_tensors="pt")
+        outputs = model.generate(**inputs, max_length=2048, temperature=0.7)
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        if response.status_code != 200:
-            return jsonify({'error': f"Failed to get response from model. Status Code: {response.status_code}"}), 500
-
-        # Extract model's answer
-        api_response = response.json()
-        if isinstance(api_response, dict) and "error" in api_response:
-            return jsonify({'error': api_response['error']}), 500
-
-        answer = api_response[0]["generated_text"]
-
-        return jsonify({'answer': answer})
+        return jsonify({'answer': response})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
