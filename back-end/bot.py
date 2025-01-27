@@ -16,7 +16,7 @@ CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Hugging Face API details
 model_name = "TheBloke/Mistral-7B-v0.1-GGUF"  # Update with your model path
-hf_token = os.getenv("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")
+hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
 model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
 
@@ -73,4 +73,5 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)
