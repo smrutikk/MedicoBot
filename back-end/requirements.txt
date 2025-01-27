@@ -1,9 +1,9 @@
-flask==2.2.5
-flask-cors==3.0.10
-transformers==4.34.0  # Match the version you are using; adjust as needed.
-torch==2.5.1          # Adjust this version based on your hardware (e.g., CUDA support).
-langchain==0.0.300    # Latest stable version, adjust if you're using a specific one.
-langchain-community==0.0.5  # Specify the version for compatibility.
-chromadb==0.4.8       # Chroma for vector storage.
-sentence-transformers==2.2.2  # For embedding-based tasks.
-pypdf==3.15.0         # For handling PDF parsing and document loading.
+flask
+flask-cors
+transformers
+torch
+langchain
+langchain-community
+chromadb
+sentence-transformers
+pypdf
