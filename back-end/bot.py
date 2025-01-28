@@ -18,9 +18,9 @@ HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "your_hf_api_key_here"
 
 # Load PDFs and split into chunks
 try:
-    loader_1 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/1.pdf")
-    loader_2 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf")
-    loader_3 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf")
+    loader_1 = PyPDFDirectoryLoader("./pdfs/1.pdf")
+    loader_2 = PyPDFDirectoryLoader("./pdfs/2.pdf")
+    loader_3 = PyPDFDirectoryLoader("./pdfs/3.pdf")
     docs = loader_1.load() + loader_2.load() + loader_3.load()
 
     if not docs:
