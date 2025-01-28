@@ -4,10 +4,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
-from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.llms import LlamaCpp
+from langchain.schema import Document
 import os
+from PyPDF2 import PdfReader
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -16,24 +17,46 @@ app = Flask(__name__)
 MODEL_PATH = "./BioMistral-7B.Q4_K_M.gguf"  # Ensure this points to your local LlamaCpp model file
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "your_hf_api_key_here")
 
-# Load PDFs and split into chunks
+# Function to extract text from a PDF
+def extract_text_from_pdf(pdf_path):
+    try:
+        reader = PdfReader(pdf_path)
+        text = ""
+        for page_num in range(len(reader.pages)):
+            page = reader.pages[page_num]
+            text += page.extract_text() or ""
+        return text
+    except Exception as e:
+        print(f"Error extracting text from {pdf_path}: {e}")
+        return ""
+
+# Verify that the PDFs contain extractable text
+pdf_paths = [
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/1.pdf",
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf",
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf"
+]
+
+documents = []
+
+# Extract text from each PDF and wrap it in Document objects
+for path in pdf_paths:
+    text = extract_text_from_pdf(path)
+    print(f"Text from {path[:20]}...: {text[:500]}")  # Print the first 500 characters of each PDF text
+    if text.strip():  # Only create Document if text is not empty
+        documents.append(Document(page_content=text, metadata={"source": path}))
+    else:
+        print(f"Warning: No extractable text in {path}")
+
+# Split the documents into chunks
 try:
-    loader_1 = PyPDFDirectoryLoader("./pdfs/1.pdf")
-    loader_2 = PyPDFDirectoryLoader("./pdfs/2.pdf")
-    loader_3 = PyPDFDirectoryLoader("./pdfs/3.pdf")
-    docs = loader_1.load() + loader_2.load() + loader_3.load()
-
-    if not docs:
-        raise ValueError("No documents loaded. Ensure the paths and PDFs are correct.")
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
-    chunks = text_splitter.split_documents(docs)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+    chunks = text_splitter.split_documents(documents)
 
     if not chunks:
         raise ValueError("Document chunks are empty. Check the text splitting logic.")
-
 except Exception as e:
-    print(f"Error during document loading and processing: {e}")
+    print(f"Error during document splitting: {e}")
     raise
 
 # Create embeddings and vector store
