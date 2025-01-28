@@ -1,41 +1,66 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # To allow requests from the frontend
-import os
-from transformers import LlamaTokenizer, AutoModelForCausalLM
-from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.schema.runnable import RunnablePassthrough
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
+from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_community.llms import LlamaCpp
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing
 
-# Hugging Face API details
-model_name = "TheBloke/Mistral-7B-v0.1-GGUF"  # Update with your model path
-hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-tokenizer = LlamaTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
-model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
+# Configure model and paths
+MODEL_PATH = "./BioMistral-7B.Q4_K_M.gguf"  # Ensure this points to your local LlamaCpp model file
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "your_hf_api_key_here")
 
-# Load embeddings
-embeddings = SentenceTransformerEmbeddings(model_name="NeuML/pubmedbert-base-embeddings")
+# Load PDFs and split into chunks
+try:
+    loader_1 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/1.pdf")
+    loader_2 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf")
+    loader_3 = PyPDFDirectoryLoader("C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf")
+    docs = loader_1.load() + loader_2.load() + loader_3.load()
 
-# Load PDFs and create a vector store
-pdf_directory = "./pdfs"
-loader = PyPDFDirectoryLoader(pdf_directory)
-docs = loader.load()
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
-chunks = text_splitter.split_documents(docs)
-vectorstore = Chroma.from_documents(chunks, embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+    if not docs:
+        raise ValueError("No documents loaded. Ensure the paths and PDFs are correct.")
+
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
+    chunks = text_splitter.split_documents(docs)
+
+    if not chunks:
+        raise ValueError("Document chunks are empty. Check the text splitting logic.")
+
+except Exception as e:
+    print(f"Error during document loading and processing: {e}")
+    raise
+
+# Create embeddings and vector store
+try:
+    embeddings = SentenceTransformerEmbeddings(model_name="NeuML/pubmedbert-base-embeddings")
+    vectorstore = Chroma.from_documents(chunks, embeddings)
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+except Exception as e:
+    print(f"Error during embeddings or vector store creation: {e}")
+    raise
+
+# Load LLM
+try:
+    llm = LlamaCpp(
+        model_path=MODEL_PATH,
+        temperature=0.2,
+        max_tokens=2048,
+        top_p=1
+    )
+except Exception as e:
+    print(f"Error loading LLM: {e}")
+    raise
 
 # Define the prompt template
 template = """
 <|context|>
-You are a Medical Assistant that follows the instruction and generates an accurate response based on the query and the context provided.
+You are a Medical Assistant that follows the instructions and generates accurate responses based on the query and the context provided.
 Please be truthful and give direct answers.
 </s>
 <|user|>
@@ -45,29 +70,29 @@ Please be truthful and give direct answers.
 """
 prompt = ChatPromptTemplate.from_template(template)
 
+# Create the RAG chain
+try:
+    rag_chain = (
+        {"context": retriever, "query": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+except Exception as e:
+    print(f"Error creating RAG chain: {e}")
+    raise
+
+# API Endpoint
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get input data
         data = request.json
         question = data.get("question")
-
-        # Ensure question is provided
         if not question:
             return jsonify({'error': 'No question provided'}), 400
 
-        # Retrieve context from vectorstore
-        context_docs = retriever.get_relevant_documents(question)
-        context = " ".join([doc.page_content for doc in context_docs])
-
-        # Prepare the prompt for the LLM
-        prompt = f"<|context|>\n{context}\n<|user|>\n{question}\n<|assistant|>\n"
-
-        # Generate response using the Hugging Face model
-        inputs = tokenizer(prompt, return_tensors="pt")
-        outputs = model.generate(**inputs, max_length=2048, temperature=0.7)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
+        # Get response from RAG chain
+        response = rag_chain.invoke(question)
         return jsonify({'answer': response})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
