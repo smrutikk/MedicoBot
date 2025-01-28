@@ -32,9 +32,9 @@ def extract_text_from_pdf(pdf_path):
 
 # Verify that the PDFs contain extractable text
 pdf_paths = [
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/1.pdf",
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf",
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf"
+    "./pdfs/1.pdf",
+    "./pdfs/2.pdf",
+    "./pdfs/3.pdf"
 ]
 
 documents = []
@@ -42,7 +42,7 @@ documents = []
 # Extract text from each PDF and wrap it in Document objects
 for path in pdf_paths:
     text = extract_text_from_pdf(path)
-    print(f"Text from {path[:20]}...: {text[:500]}")  # Print the first 500 characters of each PDF text
+    #print(f"Text from {path[:20]}...: {text[:500]}")  # Print the first 500 characters of each PDF text
     if text.strip():  # Only create Document if text is not empty
         documents.append(Document(page_content=text, metadata={"source": path}))
     else:
