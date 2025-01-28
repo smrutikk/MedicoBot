@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # To allow requests from the frontend
 import os
-from transformers import LlamaTokenizer
+from transformers import LlamaTokenizer, AutoModelForCausalLM
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import SentenceTransformerEmbeddings
