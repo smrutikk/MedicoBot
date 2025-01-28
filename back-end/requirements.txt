@@ -15,4 +15,5 @@ numpy==1.24.3
 pandas==2.1.1
 scikit-learn==1.3.1
 PyPDF2
-huggingface_hub
+huhuggingface-hub==0.12.1
+
