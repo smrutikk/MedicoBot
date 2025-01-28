@@ -106,6 +106,10 @@ except Exception as e:
     raise
 
 # API Endpoint
+@app.route('/')
+def health_check():
+    return "App is running!", 200
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
