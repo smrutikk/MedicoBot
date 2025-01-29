@@ -43,8 +43,7 @@ Medico-Bot 2.0 is an AI-powered medical assistant that leverages Generative AI t
     ```
     Alternatively, you can install the individual packages:
    ```bash
-   pip install flask flask-cors langchain_community sentence-transformers chromadb llama-cpp- 
-   python PyPDF2
+   pip install flask flask-cors langchain_community sentence-transformers chromadb llama-cpp-python PyPDF2
    python bot.py
    ```
 
