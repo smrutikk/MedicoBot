@@ -1,14 +1,16 @@
-#Medico-Bot 2.0 
+# Medico-Bot 2.0 
 
 Medico-Bot 2.0 is an AI-powered medical assistant that leverages Generative AI to assist with querying medical information. Built with **LangChain**, **LlamaCpp**, **ChromaDB**, and **BioMistral-7B**, it answers user queries based on content extracted from medical PDFs.This project demonstrates the power of RAG and how combining document retrieval and language models can improve the accuracy and relevance of responses.
 
 
-##Features
+## Features
 **Medical Querying:** Answer medical queries by providing accurate responses based on medical documents.
 **PDF Integration:** Extracts text from multiple medical PDF documents and indexes them for fast retrieval.
 **RAG (Retrieval-Augmented Generation):** Combines document retrieval with generative models to produce context-aware answers.
 
-##Technology Stack
+---
+
+## Technology Stack
 **Frontend:** React
 **Backend:** 
 - LangChain: Used for building the retrieval-augmented generation (RAG) pipeline.
@@ -17,12 +19,16 @@ Medico-Bot 2.0 is an AI-powered medical assistant that leverages Generative AI t
 - Sentence Transformers: Used to generate embeddings for text documents.
 - Flask: Web framework used to deploy the model as an API.
 
-##Prerequisites
+---
+
+## Prerequisites
    Before running the project locally, ensure you have the following installed:
      Python 3.10 / 3.11
      pip (Python package installer)
 
-##Setup Instructions
+---
+
+## Setup Instructions
 1. Clone the repository
    ```bash
    git clone <your-repository-url>
