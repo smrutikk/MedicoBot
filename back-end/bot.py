@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS 
 from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import ChatPromptTemplate
@@ -12,6 +13,7 @@ from PyPDF2 import PdfReader
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  
 
 # Configure model and paths
 MODEL_PATH = "./BioMistral-7B.Q4_K_M.gguf"  # Ensure this points to your local LlamaCpp model file
@@ -32,9 +34,9 @@ def extract_text_from_pdf(pdf_path):
 
 # Verify that the PDFs contain extractable text
 pdf_paths = [
-    "./pdfs/1.pdf",
-    "./pdfs/2.pdf",
-    "./pdfs/3.pdf"
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/pdfs/1.pdf",
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf",
+    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf"
 ]
 
 documents = []
