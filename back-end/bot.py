@@ -34,9 +34,9 @@ def extract_text_from_pdf(pdf_path):
 
 # Verify that the PDFs contain extractable text
 pdf_paths = [
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/pdfs/1.pdf",
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/2.pdf",
-    "C:/Users/Smrut/OneDrive/Documents/GitHub/MedicoBot/back-end/pdfs/3.pdf"
+    "./pdfs/1.pdf",
+    "./pdfs/2.pdf",
+    "./pdfs/3.pdf"
 ]
 
 documents = []
