@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+#Medico-Bot 2.0 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Medico-Bot 2.0 is an AI-powered medical assistant that leverages Generative AI to assist with querying medical information. Built with **LangChain**, **LlamaCpp**, **ChromaDB**, and **BioMistral-7B**, it answers user queries based on content extracted from medical PDFs.This project demonstrates the power of RAG and how combining document retrieval and language models can improve the accuracy and relevance of responses.
 
-## Available Scripts
 
-In the project directory, you can run:
+##Features
+**Medical Querying:** Answer medical queries by providing accurate responses based on medical documents.
+**PDF Integration:** Extracts text from multiple medical PDF documents and indexes them for fast retrieval.
+**RAG (Retrieval-Augmented Generation):** Combines document retrieval with generative models to produce context-aware answers.
 
-### `npm start`
+##Technology Stack
+**Frontend:** React
+**Backend:** 
+- LangChain: Used for building the retrieval-augmented generation (RAG) pipeline.
+- LlamaCpp: A C++ implementation of Llama models, used for text generation.
+- ChromaDB: A vector database for storing and retrieving document embeddings.
+- Sentence Transformers: Used to generate embeddings for text documents.
+- Flask: Web framework used to deploy the model as an API.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+##Prerequisites
+   Before running the project locally, ensure you have the following installed:
+     Python 3.10 / 3.11
+     pip (Python package installer)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+##Setup Instructions
+1. Clone the repository
+   ```bash
+   git clone <your-repository-url>
+   cd <your-project-folder>
+   ```
 
-### `npm test`
+2. Install **Backend** required dependencies
+   You can install the required Python packages by running the following command:
+    ```bash
+    pip install -r requirements.txt
+    python bot.py
+    ```
+    Alternatively, you can install the individual packages:
+   ```bash
+   pip install flask flask-cors langchain_community sentence-transformers chromadb llama-cpp- 
+   python PyPDF2
+   python bot.py
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Install frontend dependencies:
+   ```bash
+   npm install
+   npm run build
+   npm start
+   ```
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
