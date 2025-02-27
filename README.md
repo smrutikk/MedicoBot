@@ -24,8 +24,9 @@ Medico-Bot 2.0 is an AI-powered medical assistant that leverages Generative AI t
 ## Screenshots 
 
 <div>
-   <img src="img/SS_1.png" alt="Google Sheets Clone" width="450" >
-   <img src="img/SS_2.png" alt="Google Sheets Clone" width="450" >
+   <img src="Imgs/1.png" alt="Bot" width="450" >
+   <img src="Imgs/2.png" alt="Bot" width="450" >
+   <img src="Imgs/3.png" alt="Bot" width="450" >
 </div>
 
 ---
